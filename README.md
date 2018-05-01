@@ -13,12 +13,10 @@ This app uses MongoDB/mongoose to post, get, and delete Cat instances from the d
   - No name passed: 400 status
   - Server error: 500 status
   
-`Router.get(/api/cats, callback)` : Retrieves all the cats currently in the database.
-  - Successful retrieval: 200 status
+`Router.get(/api/cats/:id?, callback)` : If no id is passed, retrieves all the cats currently in the database. If id is passed, looks for cat at the id specified in the request parameters. Checks that a defined cat has been returned from the request.
+  - Successful retrieval of all cats: 200 status
   - Server error: 500 status
-  
-`Router.get(/api/cats/:id, callback)` : Looks for a cat at the id specified in the request parameters. Checks that a cat has been returned from the request
-  - Successful retrieval: 200 status
+  - Successful retrieval of one cat: 200 status
   - Cat returned but undefined: 404 status
   - No cat found at id: 404 status
   - Server error: 500 status
