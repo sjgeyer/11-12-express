@@ -59,12 +59,12 @@ describe('/api/cats', () => {
           expect(res.status).toEqual(400);
         });
     });
-    test('should respond with 500 status', () => {
+    test('should respond with 409 status', () => {
       return superagent.post(apiURL)
         .send(duplicateCat)
         .then(Promise.reject)
         .catch((res) => {
-          expect(res.status).toEqual(500);
+          expect(res.status).toEqual(409);
         });
     });
   });
