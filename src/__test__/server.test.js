@@ -17,6 +17,8 @@ const createMockCat = () => {
   }).save();
 };
 
+let duplicateCat = null;
+
 describe('/api/cats', () => {
   beforeAll(startServer);
   afterAll(() => {
@@ -32,6 +34,7 @@ describe('/api/cats', () => {
         favoriteFood: faker.random.word(),
         age: faker.random.number(),
       };
+      duplicateCat = catToPost;
       return superagent.post(apiURL)
         .send(catToPost)
         .then((res) => {
@@ -54,6 +57,14 @@ describe('/api/cats', () => {
         .then(Promise.reject)
         .catch((res) => {
           expect(res.status).toEqual(400);
+        });
+    });
+    test('should respond with 500 status', () => {
+      return superagent.post(apiURL)
+        .send(duplicateCat)
+        .then(Promise.reject)
+        .catch((res) => {
+          expect(res.status).toEqual(500);
         });
     });
   });

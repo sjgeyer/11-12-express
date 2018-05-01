@@ -28,40 +28,40 @@ catRouter.post('/api/cats', jsonParser, (req, res) => {
   return undefined;
 });
 
-catRouter.get('/api/cats', (req, res) => {
-  logger.log(logger.INFO, 'GET ALL: processing a request');
-  Cat.find()
-    .then((cats) => {
-      logger.log(logger.INFO, 'GET ALL: 200 status');
-      return res.json(cats);
-    })
-    .catch((error) => {
-      logger.log(logger.ERROR, '__GET_ONE_ERROR__: 500 status');
-      logger.log(logger.ERROR, error);
-      return res.sendStatus(500);
-    });
-});
-
-catRouter.get('/api/cats/:id', (req, res) => {
-  logger.log(logger.INFO, 'GET ONE: processing a request');
-  Cat.findById(req.params.id)
-    .then((cat) => {
-      if (!cat) {
-        logger.log(logger.INFO, 'GET ONE: 404 status (!cat)');
-        res.sendStatus(404);
-      }
-      logger.log(logger.INFO, 'GET ONE: 200 status');
-      return res.json(cat);
-    })
-    .catch((error) => {
-      if (error.message.toLowerCase().indexOf('cast to objectid failed') > -1) {
-        logger.log(logger.INFO, `GET ONE: 404 status, error finding ${req.params.id}`);
-        return res.sendStatus(404);
-      }
-      logger.log(logger.ERROR, '__GET_ONE_ERROR__: 500 status');
-      logger.log(logger.ERROR, error);
-      return res.sendStatus(500);
-    });
+catRouter.get('/api/cats/:id?', (req, res) => {
+  if (!req.params.id) {
+    logger.log(logger.INFO, 'GET ALL: processing a request');
+    Cat.find()
+      .then((cats) => {
+        logger.log(logger.INFO, 'GET ALL: 200 status');
+        return res.json(cats);
+      })
+      .catch((error) => {
+        logger.log(logger.ERROR, '__GET_ALL_ERROR__: 500 status');
+        logger.log(logger.ERROR, error);
+        return res.sendStatus(500);
+      });
+  } else {
+    logger.log(logger.INFO, 'GET ONE: processing a request');
+    Cat.findById(req.params.id)
+      .then((cat) => {
+        if (!cat) {
+          logger.log(logger.INFO, 'GET ONE: 404 status (!cat)');
+          res.sendStatus(404);
+        }
+        logger.log(logger.INFO, 'GET ONE: 200 status');
+        return res.json(cat);
+      })
+      .catch((error) => {
+        if (error.message.toLowerCase().indexOf('cast to objectid failed') > -1) {
+          logger.log(logger.INFO, `GET ONE: 404 status, error finding ${req.params.id}`);
+          return res.sendStatus(404);
+        }
+        logger.log(logger.ERROR, '__GET_ONE_ERROR__: 500 status');
+        logger.log(logger.ERROR, error);
+        return res.sendStatus(500);
+      });
+  }
 });
 
 catRouter.delete('/api/cats/:id?', (req, res) => {
