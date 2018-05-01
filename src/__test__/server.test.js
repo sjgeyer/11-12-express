@@ -17,13 +17,12 @@ const createMockCat = () => {
   }).save();
 };
 
-beforeAll(startServer);
-afterAll(() => {
-  stopServer();
-  Cat.remove({});
-});
-
 describe('/api/cats', () => {
+  beforeAll(startServer);
+  afterAll(() => {
+    stopServer();
+    Cat.remove({});
+  });
   let testId = null;
   describe('POST /api/cats', () => {
     test('should respond with 200 status', () => {
@@ -116,12 +115,12 @@ describe('/api/cats', () => {
           expect(res.status).toEqual(404);
         });
     });
-    // test('should respond with 400 if there is no id', () => {
-    //   return superagent.del(`${apiURL}/`)
-    //     .then(Promise.reject)
-    //     .catch((res) => {
-    //       expect(res.status).toEqual(400);
-    //     });
-    // });
+    test('should respond with 400 if there is no id', () => {
+      return superagent.del(`${apiURL}`)
+        .then(Promise.reject)
+        .catch((res) => {
+          expect(res.status).toEqual(400);
+        });
+    });
   });
 });

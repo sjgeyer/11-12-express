@@ -64,18 +64,14 @@ catRouter.get('/api/cats/:id', (req, res) => {
     });
 });
 
-catRouter.delete('/api/cats/:id', (req, res) => {
+catRouter.delete('/api/cats/:id?', (req, res) => {
   logger.log(logger.INFO, 'DELETE: processing a request');
   if (!req.params.id) {
     logger.log(logger.INFO, 'DELETE: 400 status (!req.params.id)');
     return res.sendStatus(400);
   }
   Cat.findByIdAndRemove(req.params.id)
-    .then((cat) => {
-      if (!cat) {
-        logger.log(logger.INFO, 'DELETE: 404 status (!cat)');
-        return res.sendStatus(404);
-      }
+    .then(() => {
       logger.log(logger.INFO, 'DELETE: 204 status');
       return res.sendStatus(204);
     })
