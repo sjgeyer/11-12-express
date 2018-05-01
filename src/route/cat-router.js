@@ -36,9 +36,7 @@ catRouter.get('/api/cats/:id?', (req, res, next) => {
     logger.log(logger.INFO, 'GET ONE: processing a request');
     Cat.findById(req.params.id)
       .then((cat) => {
-        if (!cat) {
-          return next(new HttpErrors(404, 'GET ONE: cat not found'));
-        }
+        if (!cat) return next(new HttpErrors(404, 'GET ONE: cat not found'));
         logger.log(logger.INFO, 'GET ONE: 200 status');
         return res.json(cat);
       })
@@ -46,11 +44,22 @@ catRouter.get('/api/cats/:id?', (req, res, next) => {
   }
 });
 
+catRouter.put('/api/cats/:id?', jsonParser, (req, res, next) => {
+  if (!req.params.id) return next(new HttpErrors(400, 'PUT: no id passed'));
+  logger.log(logger.INFO, 'PUT: processing a request');
+  const options = { runValidators: true, new: true };
+  return Cat.findByIdAndUpdate(req.params.id, req.body, options)
+    .then((updatedCat) => {
+      if (!updatedCat) return next(new HttpErrors(404, `PUT: cat not found at id ${req.params.id}`));
+      logger.log(logger.INFO, 'PUT: 200 status');
+      return res.json(updatedCat);
+    })
+    .catch(next);
+});
+
 catRouter.delete('/api/cats/:id?', (req, res, next) => {
   logger.log(logger.INFO, 'DELETE: processing a request');
-  if (!req.params.id) {
-    return next(new HttpErrors(400, 'DELETE: no id passed'));
-  }
+  if (!req.params.id) return next(new HttpErrors(400, 'DELETE: no id passed'));
   Cat.findByIdAndRemove(req.params.id)
     .then(() => {
       logger.log(logger.INFO, 'DELETE: 204 status');

@@ -111,6 +111,40 @@ describe('/api/cats', () => {
     });
   });
 
+  describe('PUT /api/cats', () => {
+    test('should respond with 200 status', () => {
+      let catToUpdate = null;
+      return createMockCat()
+        .then((mockCat) => {
+          catToUpdate = mockCat;
+          return superagent.put(`${apiURL}/${mockCat._id}`)
+            .send({ favoriteFood: 'Pizza' });
+        })
+        .then((res) => {
+          expect(res.status).toEqual(200);
+          expect(res.body.favoriteFood).toEqual('Pizza');
+          expect(res.body.name).toEqual(catToUpdate.name);
+          expect(res.body.age).toEqual(catToUpdate.age);
+          expect(res.body.color).toEqual(catToUpdate.color);
+          expect(res.body._id).toEqual(catToUpdate._id.toString());
+        });
+    });
+    test('should respond with 400 status if there is no id', () => {
+      return superagent.put(apiURL)
+        .then(Promise.reject)
+        .catch((res) => {
+          expect(res.status).toEqual(400);
+        });
+    });
+    test('should respond with 404 status if id is invalid', () => {
+      return superagent.put(`${apiURL}/INVALIDID`)
+        .then(Promise.reject)
+        .catch((res) => {
+          expect(res.status).toEqual(404);
+        });
+    });
+  });
+
   describe('DELETE /api/cats', () => {
     test('should respond with 204 status', () => {
       return superagent.del(`${apiURL}/${testId}`)
