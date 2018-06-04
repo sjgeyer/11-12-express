@@ -3,17 +3,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import logger from './logger';
+import errorMiddleware from './error-middleware';
 import catRoutes from '../route/cat-router';
 
 const app = express();
 let server = null;
 
 app.use(catRoutes);
-
 app.all('*', (req, res) => {
   logger.log(logger.INFO, 'Returning 404 from catch-all route');
   return res.sendStatus(404);
 });
+app.use(errorMiddleware);
 
 const startServer = () => {
   return mongoose.connect(process.env.MONGODB_URI)
